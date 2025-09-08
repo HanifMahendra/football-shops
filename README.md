@@ -1,8 +1,8 @@
-[# football-shops](https://pbp.cs.ui.ac.id/web/project/hanif.awiyoso/footballshops)
+https://hanif-awiyoso-footballshops.pbp.cs.ui.ac.id/
 
 Untuk mengimplementasikan checklist di atas dalam proyek Django, saya biasanya mulai dari merancang model data di models.py, karena model ini merepresentasikan struktur data dan relasi antar entitas di database. Setelah itu, saya membuat fungsi atau class di views.py yang akan mengeksekusi logika ketika ada permintaan (request) dari client, misalnya mengambil data dari model, memprosesnya, atau menampilkan halaman tertentu. Selanjutnya, saya membuat urls.py untuk memetakan setiap URL endpoint ke view yang sesuai, sehingga ketika client mengakses URL tertentu, Django tahu view mana yang harus dijalankan. Terakhir, saya menyiapkan kode HTML yang akan dirender oleh view untuk menampilkan data ke client, biasanya melalui context yang dikirim dari views.
 
-Client Request (HTTP) ──> urls.py ──> views.py ──> models.py ──> Database
+Client Request (HTTP) -> urls.py -> views.py -> models.py -> Database
 
 Dalam bagan tersebut, urls.py berfungsi sebagai penghubung antara URL yang diminta client dengan fungsi view yang relevan. views.py mengeksekusi logika aplikasi, termasuk interaksi dengan database melalui models.py, sedangkan HTML bertugas menampilkan data tersebut ke client.
 
