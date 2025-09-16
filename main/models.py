@@ -8,10 +8,8 @@ class Product(models.Model):
     category = models.CharField(max_length=50)  # kategori item
     is_featured = models.BooleanField(default=False)  # status unggulan
 
-    # opsional tambahan
     stock = models.IntegerField(default=0)
     brand = models.CharField(max_length=50, blank=True, null=True)
-    rating = models.FloatField(default=0.0)
 
     def __str__(self):
         return self.name

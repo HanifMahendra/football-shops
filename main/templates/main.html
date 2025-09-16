@@ -1,111 +1,17 @@
-<!DOCTYPE html>
-<html lang="id">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Football-Lock Shop</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      background: #f5f5f5;
-    }
+{% extends 'base.html' %}
 
-    /* Header Atas */
-    .top-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 30px;
-      background: #1e3a5f;
-      color: white;
-    }
-    .top-header h1 {
-      margin: 0;
-      font-size: 26px;
-    }
-    .top-header h2 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: normal;
-      color: #e0e0e0;
-    }
-
-    /* Section Produk dengan Background */
-    .product-section {
-      background: linear-gradient(rgba(10,22,40,0.5), rgba(74,144,226,0.5)),
-                  url('https://cdn.wallpapersafari.com/54/95/dK0DZH.jpg');
-      background-size: cover;
-      background-position: center;
-      padding: 80px 20px;
-      text-align: center;
-      color: white;
-    }
-    .product-section h2 {
-      font-size: 36px;
-      margin-bottom: 15px;
-      text-shadow: 2px 2px 6px rgba(0,0,0,0.5);
-    }
-    .product-section p {
-      font-size: 20px;
-      margin-bottom: 25px;
-      color: #f0f0f0;
-    }
-    .btn {
-      display: inline-block;
-      background: linear-gradient(to right, #87ceeb, #4a90e2);
-      color: white;
-      padding: 14px 28px;
-      border-radius: 8px;
-      font-weight: bold;
-      text-decoration: none;
-      transition: background 0.3s, transform 0.2s;
-    }
-    .btn:hover {
-      background: linear-gradient(to right, #4a90e2, #1e3a5f);
-      transform: translateY(-3px);
-    }
-
-    /* Footer */
-    footer {
-      background: #000000;
-      padding: 25px;
-      text-align: center;
-      color: white;
-    }
-
-    /* Responsive */
-    @media (max-width: 650px) {
-      .top-header {
-        flex-direction: column;
-        text-align: center;
-      }
-      .top-header h1 { font-size: 22px; }
-      .top-header h2 { font-size: 16px; }
-      .product-section h2 { font-size: 28px; }
-      .product-section p { font-size: 16px; }
-    }
-  </style>
-</head>
-<body>
-
-  <!-- Header Atas -->
+{% block content %}
   <div class="top-header">
     <h1>Football-Lock Shop</h1>
-    <h2>{{name}} - {{class}}</h2>
+    <h2>{{ name }} - {{ class }}</h2>
   </div>
 
-  <!-- Section Produk -->
   <div class="product-section">
     <h2>Limited Products</h2>
-    <p>Belum ada produk</p>
-    <a href="#" class="btn">See all products</a>
+    <a href="{% url 'main:product_list' %}" class="btn">See All Products</a>
   </div>
 
-  <!-- Footer -->
   <footer>
-    <p>Football-Lock Shop - Made by {{name}}</p>
+    <p>Football-Lock Shop - Made by {{ name }}</p>
   </footer>
-
-</body>
-</html>
+{% endblock content %}
