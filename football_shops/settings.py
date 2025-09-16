@@ -34,6 +34,12 @@ DEBUG = True
 
 ALLOWED_HOSTS = ["localhost", "127.0.0.1","hanif-awiyoso-footballshops.pbp.cs.ui.ac.id"]
 
+CSRF_TRUSTED_ORIGINS = [
+    "https://hanif-awiyoso-footballshops.pbp.cs.ui.ac.id",
+    "http://hanif-awiyoso-footballshops.pbp.cs.ui.ac.id",
+]
+
+
 
 # Application definition
 
