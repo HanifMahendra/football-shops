@@ -9,8 +9,6 @@
   <div class="product-section">
     <h2>Limited Products</h2>
     <a href="{% url 'main:product_list' %}" class="btn">See All Products</a>
-    <a href="{% url 'main:logout' %}">
-    <button>Logout</button>
     </a>
     <h5>Sesi terakhir login: {{ last_login }}</h5>
     <a href="?filter=all">
@@ -18,6 +16,8 @@
     </a>
     <a href="?filter=my">
         <button type="button">My Products</button>
+    <a href="{% url 'main:logout' %}">
+    <button>Logout</button>
 </a>
   </div>
 
