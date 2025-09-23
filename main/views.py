@@ -16,7 +16,7 @@ def show_main(request):
     filter_type = request.GET.get("filter","all")
 
     if filter_type == "all":
-        product = Product.objects.all()
+        products = Product.objects.all()
     else:
         products = Product.objects.filter(user=request.user)
     context = {
