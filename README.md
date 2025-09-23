@@ -54,3 +54,79 @@ Berikut jawaban saya:
 6. Sebagai feedback untuk asdos pada tutorial 2, menurut saya penjelasan yang diberikan sudah membantu karena disertai contoh praktis. Namun, akan lebih baik kalau penjelasan dibuat lebih detail, karena sering membuat bingung. Kalau bisa, disertakan juga contoh singkat tentang cara membuat unit test, supaya mahasiswa terbiasa melakukan pengujian sejak awal.
 
 Terlampir link gdrive untuk hasil screenshot Postman saya: https://drive.google.com/drive/folders/1RmMSs1khdIuJFtiMLP7fyydIGSSKtjaQ?usp=sharing
+
+README tugas 4
+
+Pertanyaan:
+1. Apa itu Django AuthenticationForm? Jelaskan juga kelebihan dan kekurangannya.
+2. Apa perbedaan antara autentikasi dan otorisasi? Bagaiamana Django mengimplementasikan kedua konsep tersebut?
+3. Apa saja kelebihan dan kekurangan session dan cookies dalam konteks menyimpan state di aplikasi web?
+4. Apakah penggunaan cookies aman secara default dalam pengembangan web, atau apakah ada risiko potensial yang harus diwaspadai? Bagaimana Django menangani hal tersebut?
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial).
+
+Berikut jawaban saya:
+1. **AuthenticationForm** adalah form yang disediakan Django di django.contrib.auth.forms. Fungsinya untuk menangani proses login: menerima input username/password (atau sesuai `USERNAME_FIELD` pada User model), memanggil authenticate() untuk memverifikasi kredensial, dan memudahkan validasi/error message. LoginView (class-based view bawaan) menggunakan `AuthenticationForm` secara default.
+Kelebihan:
+Siap pakai, teruji, integrasi mulus dengan authenticate() dan login().
+Menyediakan error handling dan message standar.
+Mendukung request di constructor (dipakai oleh beberapa backend yang butuh request).
+Mudah dipakai dengan LoginView.
+Kekurangan:
+Default berasumsi login via `USERNAME_FIELD`. Jika ingin login pakai email/OTP/2FA → perlu customisasi (custom form / backend).
+Tidak ada fitur "remember me" otomatis, maka harus ditambahkan secara manual.
+Kalau butuh validasi level objek, dibutuhkan override/extend.
+
+2. `Autentikasi (Authentication)` = "Siapa kamu?" -> proses memverifikasi identitas (username/password, token, OAuth).
+`Otorisasi (Authorization)` = "Boleh apa yang kamu lakukan?" -> proses memeriksa apakah identitas tersebut punya hak untuk mengakses resource/aksi tertentu.
+`**Autentikasi di Django:**`
+django.contrib.auth menyediakan model User, fungsi authenticate(), login() dan logout().
+Authentication backends (AUTHENTICATION_BACKENDS) menentukan cara memverifikasi kredensial. Default ModelBackend memeriksa username/password terhadap DB.
+AuthenticationMiddleware + SessionMiddleware mengisi request.user tiap request (user atau AnonymousUser).
+login(request, user) menyimpan identitas ke session dan memanggil request.session.cycle_key() untuk mencegah session fixation.
+`Otorisasi di Django:`
+Sistem permission built-in: model Permission, user_permissions, Group.
+API: user.has_perm('app_label.codename'), user.has_perms([...]_, user.has_module_perms('app').
+Dekorator: @login_required, @permission_required, LoginRequiredMixin untuk class-based views.
+Untuk object-level permissions Django tidak menyediakan full solution built-in — biasa pakai library seperti django-guardian atau implementasi manual.
+
+3. **Cookies (client-side)**
+**Kelebihan:**
+Tidak butuh penyimpanan server (skala horizontal mudah).
+Berguna untuk preference kecil (tema, bahasa).
+Bisa membuat aplikasi sepenuhnya stateless bila menyimpan seluruh state di cookie (umumnya disarankan hanya untuk data kecil dan aman).
+**Kekurangan:**
+Terbatas ukuran (≈4KB).
+Rentan terhadap XSS (jika bukan HttpOnly) dan manipulasi (kecuali ditandatangani/terenkripsi).
+Dikirim ke server di setiap request → overhead jaringan & kebocoran info.
+Penyimpanan sensitif pada client berarti kontrol invalidasi/penarikan kembali sulit.
+
+**Sessions (server-side, + sessionid cookie)**
+**Kelebihan:**
+Data disimpan di server — lebih aman terhadap manipulasi klien.
+Mudah menghapus/invalidate sesi (mis. logout, forced logout).
+Bisa menyimpan data besar tanpa mengirimkannya setiap request (hanya session id di cookie).
+**Kekurangan:**
+Butuh penyimpanan server (DB/Cache/Redis) → kompleksitas & cost; harus dipikirkan saat scaling (shared sessions).
+Jika skala horizontal, butuh backend session terpusat (Redis/DB) atau sticky sessions.
+Jika menggunakan backend “signed cookie” (Django: signed_cookies), maka risikonya mirip cookie biasa (meskipun data ditandatangani).
+
+4. **Tidak**. Cookies sendiri tidak otomatis aman — ada beberapa vektor serangan yang harus diperhatikan: XSS (script yang baca cookie), CSRF (aksi atas nama user), Man-in-the-Middle (jika tidak pakai HTTPS), session fixation, dan cookie tampering.
+**Risiko utama:**
+XSS: jika attacker bisa menyuntik JS, dia dapat membaca cookie yang tidak HttpOnly.
+CSRF: cookie otomatis dikirim oleh browser, sehingga permintaan berbahaya dari situs lain bisa menggunakan cookie korban.
+Sniffing (MITM): jika koneksi HTTP, cookie bisa dicuri.
+Tampering: jika cookie berisi data sensitif dan tidak ditandatangani/encrypted.
+**Bagaimana Django membantu / best practices:**
+Session storage server-side (default): hanya sessionid disimpan di cookie; data ada di server.
+CSRF protection: CsrfViewMiddleware + template tag {% csrf_token %} (mencegah request POST cross-site).
+Cookie flags (dapat/diharus dikonfigurasi di settings.py):
+`SESSION_COOKIE_HTTPONLY` = True → cookie session tidak bisa diakses JS (kurangi XSS impact).
+`SESSION_COOKIE_SECURE` = True → hanya dikirim via HTTPS (hindari sniffing).
+`SESSION_COOKIE_SAMESITE` = 'Lax'/'Strict' → mengurangi risiko CSRF via third-party requests.
+`CSRF_COOKIE_SECURE` dan `CSRF_COOKIE_SAMESITE` mirip untuk cookie CSRF.
+Rotate session key: login() memanggil session.cycle_key() untuk mencegah session fixation.
+Signed cookies / signing: jika memakai signed_cookies backend atau menyimpan data di cookie, Django menggunakan SECRET_KEY untuk menandatangani sehingga tamper akan terdeteksi.
+SecurityMiddleware: aktifkan untuk header security (HSTS, X-Content-Type-Options, X-Frame-Options).
+Password hashing & auth protections: Django pakai algoritma hashing yang kuat untuk password dan mekanisme pengecekan.
+
+5. Untuk mengimplementasikan checklist tersebut, pertama saya membuat fitur registrasi, login, dan logout dengan memanfaatkan form bawaan Django seperti `UserCreationForm` untuk registrasi dan `AuthenticationForm` untuk login, lalu menggunakan fungsi `login()` dan `logout()` agar status autentikasi pengguna tersimpan dalam session. Setelah itu, saya menghubungkan model `Product` dengan `User` melalui `ForeignKey` sehingga setiap produk dimiliki oleh satu pengguna tertentu. Selanjutnya, saya menambahkan dua akun pengguna di lokal menggunakan Django shell dan membuat masing-masing tiga data dummy `Product` untuk setiap akun agar bisa diuji pada aplikasi. Pada halaman utama, saya menampilkan detail pengguna yang sedang login seperti `username` dengan memanfaatkan `request.user`, serta menerapkan cookies untuk menyimpan informasi `last_login` yang diambil sebelum proses login agar bisa ditampilkan kembali saat pengguna berhasil masuk. Dengan alur ini, aplikasi dapat membedakan akses berdasarkan status login/logout, menyimpan kepemilikan data berdasarkan akun, serta memberikan pengalaman yang lebih personal lewat informasi login terakhir yang disimpan melalui cookie.
