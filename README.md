@@ -130,3 +130,103 @@ SecurityMiddleware: aktifkan untuk header security (HSTS, X-Content-Type-Options
 Password hashing & auth protections: Django pakai algoritma hashing yang kuat untuk password dan mekanisme pengecekan.
 
 5. Untuk mengimplementasikan checklist tersebut, pertama saya membuat fitur registrasi, login, dan logout dengan memanfaatkan form bawaan Django seperti `UserCreationForm` untuk registrasi dan `AuthenticationForm` untuk login, lalu menggunakan fungsi `login()` dan `logout()` agar status autentikasi pengguna tersimpan dalam session. Setelah itu, saya menghubungkan model `Product` dengan `User` melalui `ForeignKey` sehingga setiap produk dimiliki oleh satu pengguna tertentu. Selanjutnya, saya menambahkan dua akun pengguna di lokal menggunakan Django shell dan membuat masing-masing tiga data dummy `Product` untuk setiap akun agar bisa diuji pada aplikasi. Pada halaman utama, saya menampilkan detail pengguna yang sedang login seperti `username` dengan memanfaatkan `request.user`, serta menerapkan cookies untuk menyimpan informasi `last_login` yang diambil sebelum proses login agar bisa ditampilkan kembali saat pengguna berhasil masuk. Dengan alur ini, aplikasi dapat membedakan akses berdasarkan status login/logout, menyimpan kepemilikan data berdasarkan akun, serta memberikan pengalaman yang lebih personal lewat informasi login terakhir yang disimpan melalui cookie.
+
+
+README Tugas 5:
+
+Pertanyaan:
+1. Jika terdapat beberapa CSS selector untuk suatu elemen HTML, jelaskan urutan prioritas pengambilan CSS selector tersebut!
+2. Mengapa responsive design menjadi konsep yang penting dalam pengembangan aplikasi web? Berikan contoh aplikasi yang sudah dan belum menerapkan responsive design, serta jelaskan mengapa!
+3. Jelaskan perbedaan antara margin, border, dan padding, serta cara untuk mengimplementasikan ketiga hal tersebut!
+4. Jelaskan konsep flex box dan grid layout beserta kegunaannya!
+5. Jelaskan bagaimana cara kamu mengimplementasikan checklist di atas secara step-by-step (bukan hanya sekadar mengikuti tutorial)!
+
+Jawaban saya:
+1. Urutan Prioritas CSS Selector
+
+Kalau satu elemen HTML kebanyakan CSS yang nargetin, browser bakal pilih yang **paling spesifik** dulu, baru yang kurang spesifik. Urutannya kira-kira gini:
+
+1. **Inline style** (`<div style="color:red;">`) → paling kuat.
+2. **ID selector** (`#id`) → lebih spesifik dari class atau tag.
+3. **Class, pseudo-class, attribute selector** (`.class`, `:hover`, `[type="text"]`) → medium.
+4. **Tag selector** (`div`, `p`, `h1`) → paling weak.
+5. Kalau spesifisitas sama, yang ditulis **belakangan** di CSS bakal menang (cascade).
+
+Contoh:
+
+```css
+p { color: blue; }        /* tag selector */
+.text { color: green; }   /* class selector */
+#main { color: red; }     /* ID selector */
+```
+
+Kalau ada `<p id="main" class="text">` → teks bakal **merah**, karena ID lebih spesifik.
+
+2. Pentingnya Responsive Design
+
+Responsive design itu penting banget karena sekarang orang buka web dari **laptop, HP, tablet**, dan lain-lain. Kalau nggak responsive, layout bisa berantakan, tulisan susah dibaca, tombol susah ditekan.
+
+**Contoh:**
+**Responsive:** Google, Tokopedia -> layout fleksibel, menu gampang diakses di HP maupun desktop.
+**Belum responsive:** Website kampus lama -> layout tetap sama di HP dan desktop, kadang menu ilang atau teks terlalu kecil.
+
+Teknik yang biasanya dipakai: **media queries**, **flexbox**, **grid**.
+
+## 3. Perbedaan Margin, Border, dan Padding
+
+| Properti    | Fungsinya                                        | Contoh CSS                 |
+| ----------- | ------------------------------------------------ | -------------------------- |
+| **Margin**  | Jarak **luar** elemen ke elemen lain             | `margin: 10px;`            |
+| **Border**  | Garis **pinggir** elemen                         | `border: 2px solid black;` |
+| **Padding** | Jarak **dalam** elemen, antara konten dan border | `padding: 5px;`            |
+Pls rapih, udah effort haha
+
+Contoh implementasi:
+
+```css
+div.box {
+  margin: 20px;          /* jarak dari elemen lain */
+  border: 2px solid red; /* garis tepi */
+  padding: 10px;         /* jarak antara konten dan border */
+}
+```
+
+4. Konsep Flexbox dan Grid Layout
+
+**Flexbox**
+
+Layout satu dimensi (cuma baris **atau** kolom).
+Cocok buat bikin navigasi, daftar kartu, atau elemen yang pengen rapi dan fleksibel.
+
+```css
+.container {
+  display: flex;
+  justify-content: space-between; /* jarak antar elemen */
+  align-items: center;            /* rata vertikal */
+}
+```
+
+**Grid Layout**
+
+Layout dua dimensi (baris **dan** kolom).
+Cocok buat layout kompleks kayak dashboard atau halaman produk.
+
+```css
+.grid-container {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+```
+
+5. Cara Saya Ngerjain Checklist Ini Step-by-Step
+
+1. Baca soal, terus pikirin elemen mana aja yang perlu di-style.
+2. Cari referensi kode elemen-elemen untuk design yang ingin digunakan
+3. Bikin struktur HTML dulu -> header, section, article, dll.
+4. Tulis CSS -> warna, font, margin/padding, layout awal.
+5. Pilih selector yang pas -> ID, class, atau tag biar style tepat.
+6. Buat responsive -> pakai media queries, flexbox, grid.
+7. Cek di layar beda-beda -> desktop, tablet, HP, pastiin nggak pecah.
+8. Finishing -> rapihin spacing, alignment, font size.
+9. Catet di README biar langkah-langkahnya jelas. (termasuk checklist kan ya?)
