@@ -3,14 +3,14 @@
 {% block content %}
 <div class="min-h-screen flex items-center justify-center">
   <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
-    <h2 class="text-2xl font-bold mb-6 text-blue-900">Add Product</h2>
+    <h2 class="text-2xl font-bold mb-6 text-blue-900">Edit Product</h2>
 
     <form method="POST" class="space-y-4">
       {% csrf_token %}
       {{ form.as_p }}
       <button type="submit"
-        class="w-full bg-gradient-to-r from-sky-400 to-blue-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-900 transition">
-        Tambah Produk
+        class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-800 transition">
+        Update Product
       </button>
     </form>
   </div>
