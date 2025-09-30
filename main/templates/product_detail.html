@@ -1,22 +1,10 @@
 {% extends 'base.html' %}
-
+{% block title %}Detail Produk{% endblock %}
 {% block content %}
-<div class="max-w-3xl mx-auto my-10 bg-white rounded-xl shadow-lg p-6">
-  <h2 class="text-3xl font-bold mb-4 text-blue-900">{{ product.name }}</h2>
-  <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-64 object-cover rounded-lg mb-4">
-  <p><strong>Price:</strong> Rp {{ product.price }}</p>
-  <p><strong>Category:</strong> {{ product.category }}</p>
-  <p><strong>Description:</strong> {{ product.description }}</p>
-  <p><strong>Stock:</strong> {{ product.stock }}</p>
-  <p><strong>Brand:</strong> {{ product.brand }}</p>
-  <p><strong>Featured:</strong> {{ product.is_featured }}</p>
-  <p><strong>Author:</strong> {{ product.user.username|default:"Anonymous" }}</p>
-
-  <div class="mt-6">
-    <a href="{% url 'main:show_main' %}"
-      class="bg-gradient-to-r from-sky-400 to-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-900 transition">
-      Back
-    </a>
-  </div>
+<div class="max-w-lg mx-auto bg-white rounded shadow p-6">
+  <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
+  <p class="text-gray-600 mb-2">Harga: Rp {{ product.price }}</p>
+  <p class="mb-4">{{ product.description }}</p>
+  <a href="{% url 'product_list' %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Kembali</a>
 </div>
-{% endblock content %}
+{% endblock %}

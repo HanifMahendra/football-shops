@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% block meta %}
+<title>Delete Product</title>
+{% endblock meta %}
+
+{% block content %}
+<div class="max-w-lg mx-auto mt-10 bg-white shadow-lg rounded-xl p-6 text-center">
+  <h2 class="text-2xl font-bold text-red-600 mb-4">Delete Product</h2>
+  <p class="text-gray-700 mb-6">
+    Apakah kamu yakin ingin menghapus produk 
+    <span class="font-semibold text-black">"{{ product.name }}"</span>?
+  </p>
+
+  <form method="POST" class="flex justify-center space-x-4">
+    {% csrf_token %}
+    <button type="submit" class="px-5 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition">
+      Hapus
+    </button>
+    <a href="{% url 'main:product_list' %}" 
+       class="px-5 py-2 bg-gray-300 text-gray-800 rounded-lg hover:bg-gray-400 transition">
+      Batal
+    </a>
+  </form>
+</div>
+{% endblock content %}

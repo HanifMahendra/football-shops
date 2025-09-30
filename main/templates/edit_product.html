@@ -1,18 +1,11 @@
 {% extends 'base.html' %}
-
+{% block title %}Edit Produk{% endblock %}
 {% block content %}
-<div class="min-h-screen flex items-center justify-center">
-  <div class="bg-white shadow-lg rounded-xl p-8 w-full max-w-lg">
-    <h2 class="text-2xl font-bold mb-6 text-blue-900">Edit Product</h2>
+<h2 class="text-3xl font-bold mb-6 text-center">Edit Produk</h2>
 
-    <form method="POST" class="space-y-4">
-      {% csrf_token %}
-      {{ form.as_p }}
-      <button type="submit"
-        class="w-full bg-gradient-to-r from-yellow-400 to-yellow-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-yellow-600 hover:to-yellow-800 transition">
-        Update Product
-      </button>
-    </form>
-  </div>
-</div>
-{% endblock content %}
+<form method="post" class="max-w-lg mx-auto bg-white p-6 rounded shadow">
+  {% csrf_token %}
+  {{ form.as_p }}
+  <button type="submit" class="w-full mt-4 bg-yellow-600 text-white py-2 rounded hover:bg-yellow-700">Update</button>
+</form>
+{% endblock %}

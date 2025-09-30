@@ -1,0 +1,29 @@
+<nav class="bg-blue-900 text-white px-6 py-4 flex items-center justify-between">
+  <div class="text-2xl font-bold">
+    <a href="{% url 'main:show_main' %}">Football-Lock Shop</a>
+  </div>
+  <div class="hidden md:flex space-x-6">
+    <a href="{% url 'main:product_list' %}" class="hover:text-blue-300">Products</a>
+    <a href="{% url 'main:add_product' %}" class="hover:text-blue-300">Add Product</a>
+    <a href="{% url 'main:logout' %}" class="hover:text-blue-300">Logout</a>
+  </div>
+  <!-- Mobile Menu Button -->
+  <button id="menu-btn" class="md:hidden text-white focus:outline-none">
+    ☰
+  </button>
+</nav>
+
+<!-- Mobile Menu -->
+<div id="mobile-menu" class="hidden bg-blue-800 text-white flex flex-col px-6 py-4 space-y-2 md:hidden">
+  <a href="{% url 'main:product_list' %}" class="hover:text-blue-300">Products</a>
+  <a href="{% url 'main:add_product' %}" class="hover:text-blue-300">Add Product</a>
+  <a href="{% url 'main:logout' %}" class="hover:text-blue-300">Logout</a>
+</div>
+
+<script>
+  const btn = document.getElementById('menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  btn.addEventListener('click', () => {
+    menu.classList.toggle('hidden');
+  });
+</script>

@@ -99,20 +99,22 @@ def logout_user(request):
     response.delete_cookie('last_login')
     return response
 
+@login_required(login_url='/login')
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == "POST":
         form = ProductForm(request.POST, instance=product)
         if form.is_valid():
             form.save()
-            return redirect("product_list")
+            return redirect("main:product_list")  # gunakan namespace
     else:
         form = ProductForm(instance=product)
     return render(request, "edit_product.html", {"form": form})
 
+@login_required(login_url='/login')
 def delete_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if request.method == "POST":
         product.delete()
-        return redirect("product_list")
+        return redirect("main:product_list")  # gunakan namespace
     return render(request, "delete_confirm.html", {"product": product})

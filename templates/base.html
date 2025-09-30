@@ -4,11 +4,23 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  {% block meta %}{% endblock meta %}
+  <title>{% block title %}Football-Lock Shop{% endblock %}</title>
+  <link rel="stylesheet" href="{% static 'global.css' %}">
   <script src="https://cdn.tailwindcss.com"></script>
-  <title>Football-Lock Shop</title>
 </head>
-<body class="bg-gray-100 font-sans">
-  {% block content %}{% endblock content %}
+<body class="bg-gray-100 text-gray-900">
+
+  <!-- Navbar -->
+  {% include 'navbar.html' %}
+
+  <!-- Content -->
+  <main class="container mx-auto px-4 py-8">
+    {% block content %}{% endblock %}
+  </main>
+
+  <!-- Footer -->
+  <footer class="bg-black text-white py-6 text-center">
+    <p>&copy; 2025 Football-Lock Shop</p>
+  </footer>
 </body>
 </html>

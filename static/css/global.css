@@ -1,0 +1,41 @@
+/* Font & Reset */
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f3f4f6; /* Tailwind gray-100 */
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    transition: all 0.3s ease;
+    text-decoration: none;
+}
+
+button {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Card default */
+.card {
+    background-color: #fff;
+    border-radius: 0.75rem; /* rounded-xl */
+    box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -2px rgba(0,0,0,0.05);
+    padding: 1rem;
+}
+
+/* Buttons */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+}
+
+/* Colors (overwrite Tailwind if perlu) */
+.bg-blue-900 {
+    background-color: #1e3a8a;
+}
+
+.bg-gray-100 {
+    background-color: #f3f4f6;
+}
