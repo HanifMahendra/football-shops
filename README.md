@@ -172,7 +172,7 @@ Responsive design itu penting banget karena sekarang orang buka web dari **lapto
 
 Teknik yang biasanya dipakai: **media queries**, **flexbox**, **grid**.
 
-## 3. Perbedaan Margin, Border, dan Padding
+3. Perbedaan Margin, Border, dan Padding
 
 | Properti    | Fungsinya                                        | Contoh CSS                 |
 | ----------- | ------------------------------------------------ | -------------------------- |
@@ -221,12 +221,12 @@ Cocok buat layout kompleks kayak dashboard atau halaman produk.
 
 5. Cara Saya Ngerjain Checklist Ini Step-by-Step
 
-1. Baca soal, terus pikirin elemen mana aja yang perlu di-style.
-2. Cari referensi kode elemen-elemen untuk design yang ingin digunakan
-3. Bikin struktur HTML dulu -> header, section, article, dll.
-4. Tulis CSS -> warna, font, margin/padding, layout awal.
-5. Pilih selector yang pas -> ID, class, atau tag biar style tepat.
-6. Buat responsive -> pakai media queries, flexbox, grid.
-7. Cek di layar beda-beda -> desktop, tablet, HP, pastiin nggak pecah.
-8. Finishing -> rapihin spacing, alignment, font size.
-9. Catet di README biar langkah-langkahnya jelas. (termasuk checklist kan ya?)
+Baca soal, terus pikirin elemen mana aja yang perlu di-style.
+Cari referensi kode elemen-elemen untuk design yang ingin digunakan
+Bikin struktur HTML dulu -> header, section, article, dll.
+Tulis CSS -> warna, font, margin/padding, layout awal.
+Pilih selector yang pas -> ID, class, atau tag biar style tepat.
+Buat responsive -> pakai media queries, flexbox, grid.
+Cek di layar beda-beda -> desktop, tablet, HP, pastiin nggak pecah. (CTRL ALT I + M)
+Finishing -> rapihin spacing, alignment, font size.
+Catet di README biar langkah-langkahnya jelas. (termasuk checklist kan ya?)
