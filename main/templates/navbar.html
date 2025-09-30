@@ -17,11 +17,28 @@
         <i class="fas fa-home"></i>
         <span>Home</span>
       </a>
-      <a href="{% url 'main:product_list' %}" 
-         class="text-gray-300 hover:text-white transition-all duration-300 flex items-center space-x-2">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
-      </a>
+      
+      <!-- Products Dropdown -->
+      <div class="relative group">
+        <button class="text-gray-300 hover:text-white transition-all duration-300 flex items-center space-x-2">
+          <i class="fas fa-shopping-bag"></i>
+          <span>Products</span>
+          <i class="fas fa-chevron-down text-sm"></i>
+        </button>
+        <div class="absolute left-0 mt-2 w-48 glass rounded-lg shadow-lg opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300">
+          <a href="{% url 'main:product_list' %}?filter=my" 
+             class="block px-4 py-3 text-white hover:bg-white/20 transition-all duration-300 flex items-center space-x-2">
+            <i class="fas fa-user"></i>
+            <span>My Products</span>
+          </a>
+          <a href="{% url 'main:product_list' %}?filter=all" 
+             class="block px-4 py-3 text-white hover:bg-white/20 transition-all duration-300 flex items-center space-x-2">
+            <i class="fas fa-globe"></i>
+            <span>All Products</span>
+          </a>
+        </div>
+      </div>
+
       <a href="{% url 'main:add_product' %}" 
          class="btn btn-primary text-sm flex items-center space-x-2">
         <i class="fas fa-plus"></i>
@@ -60,9 +77,13 @@
         <i class="fas fa-home"></i>
         <span>Home</span>
       </a>
-      <a href="{% url 'main:product_list' %}" class="text-white hover:text-blue-300 transition flex items-center space-x-2">
-        <i class="fas fa-shopping-bag"></i>
-        <span>Products</span>
+      <a href="{% url 'main:product_list' %}?filter=my" class="text-white hover:text-blue-300 transition flex items-center space-x-2">
+        <i class="fas fa-user"></i>
+        <span>My Products</span>
+      </a>
+      <a href="{% url 'main:product_list' %}?filter=all" class="text-white hover:text-blue-300 transition flex items-center space-x-2">
+        <i class="fas fa-globe"></i>
+        <span>All Products</span>
       </a>
       <a href="{% url 'main:add_product' %}" class="text-white hover:text-blue-300 transition flex items-center space-x-2">
         <i class="fas fa-plus"></i>

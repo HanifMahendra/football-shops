@@ -1,80 +1,65 @@
 {% extends 'base.html' %}
-{% block title %}Football-Lock Shop{% endblock %}
+{% block title %}Football-Lock Shop - Home{% endblock %}
 
 {% block content %}
-<!-- Navbar -->
-<nav class="bg-blue-900 text-white px-6 py-4 flex justify-between items-center">
-    <div class="text-2xl font-bold">
-        <a href="{% url 'main:show_main' %}">Football-Lock Shop</a>
+<!-- Hero Section -->
+<section class="hero text-white text-center relative overflow-hidden min-h-screen flex items-center justify-center">
+  <div class="absolute inset-0 bg-black/30"></div>
+  <div class="relative z-10 max-w-4xl mx-auto px-4">
+    <h1 class="text-6xl md:text-8xl font-bold mb-8 animate-fadeIn">
+      Welcome to 
+      <span class="bg-gradient-to-r from-blue-400 to-purple-500 bg-clip-text text-transparent">
+        Football-Lock Shop
+      </span>
+    </h1>
+    <p class="text-xl md:text-3xl mb-12 text-gray-200 animate-fadeIn max-w-3xl mx-auto leading-relaxed" style="animation-delay: 0.2s;">
+      Discover best football equipment and gear that will elevate your game to the next level
+    </p>
+    
+    <!-- Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12 animate-fadeIn" style="animation-delay: 0.4s;">
+      <div class="glass rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+        <div class="text-4xl font-bold text-blue-400 mb-2">{{ products.count }}</div>
+        <div class="text-gray-300 text-lg">Total Products</div>
+      </div>
+      <div class="glass rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+        <div class="text-4xl font-bold text-green-400 mb-2">Premium</div>
+        <div class="text-gray-300 text-lg">Quality Assured</div>
+      </div>
+      <div class="glass rounded-2xl p-8 hover:bg-white/20 transition-all duration-300">
+        <div class="text-4xl font-bold text-purple-400 mb-2">24/7</div>
+        <div class="text-gray-300 text-lg">Support Available</div>
+      </div>
     </div>
-    <div class="flex items-center space-x-4">
-        <span>{{ name }} - {{ class }}</span>
-        <a href="{% url 'main:logout' %}" class="text-red-500 font-semibold hover:text-red-700">Logout</a>
+
+    <!-- Action Buttons -->
+    <div class="flex flex-wrap justify-center gap-6 animate-fadeIn" style="animation-delay: 0.6s;">
+      <a href="{% url 'main:add_product' %}" class="btn btn-primary text-xl px-8 py-4 rounded-2xl">
+        <i class="fas fa-plus mr-3"></i>
+        Add New Product
+      </a>
     </div>
-</nav>
 
-<!-- Hero / Action Buttons -->
-<div class="bg-cover bg-center py-20 text-center text-white relative"
-     style="background-image: linear-gradient(rgba(10,22,40,0.5), rgba(74,144,226,0.5)), url('https://cdn.wallpapersafari.com/54/95/dK0DZH.jpg');">
-
-    <h1 class="text-4xl md:text-5xl font-bold mb-6 drop-shadow-lg">Limited Products</h1>
-    <a href="{% url 'main:product_list' %}" 
-       class="bg-gradient-to-r from-sky-400 to-blue-600 px-6 py-3 rounded-lg font-semibold hover:from-blue-600 hover:to-blue-900 transition">
-        See All Products
-    </a>
-    <p class="mt-4 text-sm">Sesi terakhir login: {{ last_login }}</p>
-
-    <!-- Center Buttons -->
-    <div class="mt-6 flex justify-center flex-wrap gap-3">
-        <a href="?filter=all">
-            <button class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700">All Products</button>
-        </a>
-        <a href="?filter=my">
-            <button class="bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300">My Products</button>
-        </a>
-        <a href="{% url 'main:add_product' %}">
-            <button class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700">Add Product</button>
-        </a>
-    </div>
-</div>
-
-<!-- Product Grid -->
-<div class="p-6 max-w-7xl mx-auto">
-    {% if products %}
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-        {% for product in products %}
-        <div class="bg-white rounded-xl shadow-lg p-4">
-            <img src="{{ product.thumbnail }}" alt="{{ product.name }}" class="w-full h-48 object-cover rounded-lg mb-4">
-            <h3 class="text-lg font-bold">{{ product.name }}</h3>
-            <p class="text-sm text-gray-500">{{ product.category }}</p>
-            <p class="text-blue-700 font-semibold mb-3">Rp {{ product.price }}</p>
-
-            <div class="flex space-x-2">
-                <a href="{% url 'main:product_detail' product.id %}"
-                   class="flex-1 bg-gradient-to-r from-sky-400 to-blue-600 text-white py-2 px-3 rounded-lg text-center hover:from-blue-600 hover:to-blue-900">
-                   Detail
-                </a>
-                <a href="{% url 'main:edit_product' product.id %}"
-                   class="flex-1 bg-yellow-500 text-white py-2 px-3 rounded-lg text-center hover:bg-yellow-600">
-                   Edit
-                </a>
-                <a href="{% url 'main:delete_product' product.id %}"
-                   class="flex-1 bg-red-600 text-white py-2 px-3 rounded-lg text-center hover:bg-red-800">
-                   Delete
-                </a>
-            </div>
-        </div>
-        {% endfor %}
-    </div>
-    {% else %}
-    <div class="text-center mt-10">
-        <img src="https://source.unsplash.com/400x300/?empty,box" alt="No Products" class="mx-auto mb-4 rounded-lg shadow">
-        <p class="text-gray-600">Belum ada produk.</p>
-    </div>
+    {% if last_login %}
+    <p class="mt-8 text-lg text-gray-300 animate-fadeIn" style="animation-delay: 0.8s;">
+      <i class="fas fa-clock mr-2"></i>
+      Last login: {{ last_login }}
+    </p>
     {% endif %}
-</div>
+  </div>
 
-<footer class="bg-black text-white text-center py-4">
-    Football-Lock Shop - Made by {{ name }}
-</footer>
+  <!-- Floating Elements -->
+  <div class="absolute top-20 left-10 animate-bounce" style="animation-delay: 1s;">
+    <i class="fas fa-futbol text-6xl text-white/20"></i>
+  </div>
+  <div class="absolute bottom-20 right-10 animate-bounce" style="animation-delay: 2s;">
+    <i class="fas fa-trophy text-6xl text-white/20"></i>
+  </div>
+  <div class="absolute top-1/2 left-20 animate-bounce" style="animation-delay: 1.5s;">
+    <i class="fas fa-medal text-4xl text-white/15"></i>
+  </div>
+  <div class="absolute top-32 right-32 animate-bounce" style="animation-delay: 2.5s;">
+    <i class="fas fa-flag text-5xl text-white/15"></i>
+  </div>
+</section>
 {% endblock content %}

@@ -57,13 +57,21 @@ def add_product(request):
     return render(request, "product_form.html", context)
 
 # --- Detail Product ---
+@login_required(login_url='/login')
 def product_detail(request, id):
     product = get_object_or_404(Product, pk=id)
     return render(request, "product_detail.html", {"product": product})
 
+@login_required(login_url='/login')
 def product_list(request):
-    products = Product.objects.all()
-    return render(request, "product_list.html", {"products": products})
+    filter_type = request.GET.get("filter", "all")
+    
+    if filter_type == "my":
+        products = Product.objects.filter(user=request.user)
+    else:
+        products = Product.objects.all()
+        
+    return render(request, "product_list.html", {"products": products, "filter": filter_type})
 
 def register(request):
     form = UserCreationForm()
