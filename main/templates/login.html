@@ -8,4 +8,11 @@
   {{ form.as_p }}
   <button type="submit" class="w-full mt-4 bg-green-600 text-white py-2 rounded hover:bg-green-700">Login</button>
 </form>
+
+<div class="mt-6 text-center">
+      <p class="text-gray-600">Don't have an account?</p>
+      <a href="{% url 'main:register' %}" class="text-blue-600 hover:text-blue-800 font-semibold">Register here</a>
+    </div>
+  </div>
+</div>
 {% endblock %}
