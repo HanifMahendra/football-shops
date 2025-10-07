@@ -1,7 +1,3 @@
-// static/js/product_ajax.js
-// Pastikan file ini disimpan di static/js/product_ajax.js
-
-// Helper: get CSRF cookie
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -18,6 +14,9 @@ function getCookie(name) {
 }
 const csrftoken = getCookie('csrftoken');
 
+// =========================
+// Jalankan setelah DOM siap
+// =========================
 document.addEventListener('DOMContentLoaded', () => {
   const productContainer = document.getElementById('productContainer');
   const loadingState = document.getElementById('loadingState');
@@ -42,36 +41,42 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
-  // For storing id to delete
-  let toDeleteId = null;
+  let toDeleteId = null; // simpan id untuk delete nanti
 
-  // ---------- UI helpers ----------
+  // =========================
+  // UI Helper Functions
+  // =========================
   function showLoading() {
+    if (!loadingState) return;
     loadingState.classList.remove('hidden');
-    errorState.classList.add('hidden');
-    emptyState.classList.add('hidden');
+    errorState?.classList.add('hidden');
+    emptyState?.classList.add('hidden');
     productContainer.innerHTML = '';
   }
+
   function showError() {
-    loadingState.classList.add('hidden');
+    if (!errorState) return;
+    loadingState?.classList.add('hidden');
     errorState.classList.remove('hidden');
-    emptyState.classList.add('hidden');
+    emptyState?.classList.add('hidden');
     productContainer.innerHTML = '';
   }
+
   function showEmpty() {
-    loadingState.classList.add('hidden');
-    errorState.classList.add('hidden');
+    if (!emptyState) return;
+    loadingState?.classList.add('hidden');
+    errorState?.classList.add('hidden');
     emptyState.classList.remove('hidden');
     productContainer.innerHTML = '';
   }
+
   function hideStates() {
-    loadingState.classList.add('hidden');
-    errorState.classList.add('hidden');
-    emptyState.classList.add('hidden');
+    loadingState?.classList.add('hidden');
+    errorState?.classList.add('hidden');
+    emptyState?.classList.add('hidden');
   }
 
-  // ---------- Toast (use global toast util) ----------
-  function showToast(title, message, variant='info') {
+  function showToast(title, message, variant = 'info') {
     if (window.createToast) {
       createToast(title, message, variant);
     } else {
@@ -79,27 +84,25 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Fetch products ----------
+  // =========================
+  // Load Products
+  // =========================
   async function loadProducts() {
     showLoading();
     try {
       const res = await fetch("{% url 'main:get_products_json' %}");
-      if (!res.ok) throw new Error('Network response was not ok');
-      const data = await res.json(); // serialized data (array)
-      // data is JSON string from Django serializer; ensure array:
-      // If data is string, parse
-      let items = data;
-      if (typeof data === 'string') {
-        items = JSON.parse(data);
-      }
+      if (!res.ok) throw new Error('Network error');
+      const data = await res.json();
+      const items = typeof data === 'string' ? JSON.parse(data) : data;
 
-      if (!items || items.length === 0) {
+      if (!items?.length) {
         showEmpty();
         return;
       }
 
       hideStates();
       productContainer.innerHTML = '';
+
       items.forEach(item => {
         const pk = item.pk;
         const f = item.fields;
@@ -120,108 +123,107 @@ document.addEventListener('DOMContentLoaded', () => {
         productContainer.appendChild(card);
       });
 
-      // wire edit & delete
-      document.querySelectorAll('.editBtn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = e.target.dataset.id;
-          openEditModal(id);
-        });
-      });
-      document.querySelectorAll('.deleteBtn').forEach(btn => {
-        btn.addEventListener('click', (e) => {
-          const id = e.target.dataset.id;
-          openDeleteModal(id);
-        });
-      });
+      document.querySelectorAll('.editBtn').forEach(btn =>
+        btn.addEventListener('click', e => openEditModal(e.target.dataset.id))
+      );
+      document.querySelectorAll('.deleteBtn').forEach(btn =>
+        btn.addEventListener('click', e => openDeleteModal(e.target.dataset.id))
+      );
+
     } catch (err) {
       console.error(err);
       showError();
     }
   }
 
-  // ---------- Add / Edit via modal ----------
-  document.getElementById('openAddModal').addEventListener('click', () => {
-    inputId.value = '';
-    productModalTitle.textContent = 'Add Product';
-    inputName.value = '';
-    inputCategory.value = '';
-    inputPrice.value = '';
-    inputThumbnail.value = '';
-    productModal.classList.remove('hidden');
-  });
+  // =========================
+  // Add / Edit Modal
+  // =========================
+  const btnAdd = document.getElementById('openAddModal');
+  if (btnAdd && productModal) {
+    btnAdd.addEventListener('click', () => {
+      inputId.value = '';
+      productModalTitle.textContent = 'Add Product';
+      inputName.value = '';
+      inputCategory.value = '';
+      inputPrice.value = '';
+      inputThumbnail.value = '';
+      productModal.classList.remove('hidden');
+    });
+  }
 
-  productModalClose.addEventListener('click', () => productModal.classList.add('hidden'));
-  productModalCancel.addEventListener('click', () => productModal.classList.add('hidden'));
+  if (productModalClose) {
+    productModalClose.addEventListener('click', () => productModal.classList.add('hidden'));
+  }
+  if (productModalCancel) {
+    productModalCancel.addEventListener('click', () => productModal.classList.add('hidden'));
+  }
 
-  // Submit add/edit
-  productForm.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const id = inputId.value;
-    const payload = {
-      name: inputName.value.trim(),
-      category: inputCategory.value.trim(),
-      price: inputPrice.value,
-      thumbnail: inputThumbnail.value.trim()
-    };
+  if (productForm) {
+    productForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const id = inputId.value;
+      const payload = {
+        name: inputName.value.trim(),
+        category: inputCategory.value.trim(),
+        price: inputPrice.value,
+        thumbnail: inputThumbnail.value.trim()
+      };
 
-    try {
       if (!payload.name || !payload.category) {
         showToast('Validation', 'Nama dan kategori wajib diisi', 'warning');
         return;
       }
-      let url, method;
-      if (id) {
-        // edit
-        url = `/product-ajax/${id}/edit/`;
-        method = 'POST';
-      } else {
-        // add
-        url = "{% url 'main:add_product_ajax' %}";
-        method = 'POST';
-      }
 
-      const res = await fetch(url, {
-        method: method,
-        headers: {
-          'X-CSRFToken': csrftoken,
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        productModal.classList.add('hidden');
-        showToast('Sukses', data.message || (id ? 'Product updated' : 'Product added'), 'success');
-        await loadProducts();
-        return;
-      } else if (data && data.error) {
-        showToast('Error', data.error, 'danger');
-      } else {
-        showToast('Error', 'Gagal menyimpan produk', 'danger');
-      }
-    } catch (err) {
-      console.error(err);
-      showToast('Error', 'Gagal menyimpan produk (network)', 'danger');
-    }
-  });
+      try {
+        let url, method;
+        if (id) {
+          url = `/product-ajax/${id}/edit/`;
+          method = 'POST';
+        } else {
+          url = "{% url 'main:add_product_ajax' %}";
+          method = 'POST';
+        }
 
-  // open edit modal prefill
+        const res = await fetch(url, {
+          method,
+          headers: {
+            'X-CSRFToken': csrftoken,
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+
+        if (res.ok && data.success) {
+          productModal.classList.add('hidden');
+          showToast('Sukses', data.message || (id ? 'Product updated' : 'Product added'), 'success');
+          await loadProducts();
+        } else {
+          showToast('Error', data.error || 'Gagal menyimpan produk', 'danger');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error', 'Gagal menyimpan produk (network)', 'danger');
+      }
+    });
+  }
+
   async function openEditModal(id) {
     try {
       const res = await fetch(`/get-product-json/${id}/`);
       if (!res.ok) throw new Error('Not found');
       const data = await res.json();
-      // data is serialized single object or object with fields
-      // If serializer returned string, parse
-      let item = data;
-      if (typeof data === 'string') item = JSON.parse(data)[0];
-      const fields = item.fields;
+      const item = typeof data === 'string' ? JSON.parse(data)[0] : data;
+      const f = item.fields;
+
       inputId.value = item.pk;
-      inputName.value = fields.name || '';
-      inputCategory.value = fields.category || '';
-      inputPrice.value = fields.price || '';
-      inputThumbnail.value = fields.thumbnail || '';
+      inputName.value = f.name || '';
+      inputCategory.value = f.category || '';
+      inputPrice.value = f.price || '';
+      inputThumbnail.value = f.thumbnail || '';
+
       productModalTitle.textContent = 'Edit Product';
       productModal.classList.remove('hidden');
     } catch (err) {
@@ -230,17 +232,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Delete flow ----------
+  // =========================
+  // Delete Modal
+  // =========================
   function openDeleteModal(id) {
     toDeleteId = id;
-    // fetch name to show
     fetch(`/get-product-json/${id}/`)
       .then(res => res.json())
       .then(data => {
-        let item = data;
-        if (typeof data === 'string') item = JSON.parse(data)[0];
-        const name = item.fields.name;
-        deleteProductName.textContent = name;
+        const item = typeof data === 'string' ? JSON.parse(data)[0] : data;
+        deleteProductName.textContent = item.fields.name;
         deleteModal.classList.remove('hidden');
       }).catch(err => {
         console.error(err);
@@ -248,36 +249,46 @@ document.addEventListener('DOMContentLoaded', () => {
       });
   }
 
-  cancelDeleteBtn.addEventListener('click', () => {
-    toDeleteId = null;
-    deleteModal.classList.add('hidden');
-  });
+  if (cancelDeleteBtn) {
+    cancelDeleteBtn.addEventListener('click', () => {
+      toDeleteId = null;
+      deleteModal.classList.add('hidden');
+    });
+  }
 
-  confirmDeleteBtn.addEventListener('click', async () => {
-    if (!toDeleteId) return;
-    try {
-      const res = await fetch(`/delete-product-ajax/${toDeleteId}/`, {
-        method: 'POST',
-        headers: { 'X-CSRFToken': csrftoken }
-      });
-      const data = await res.json();
-      if (res.ok && data.success) {
-        deleteModal.classList.add('hidden');
-        showToast('Sukses', data.message || 'Produk dihapus', 'success');
-        await loadProducts();
-      } else {
-        showToast('Error', data.error || 'Gagal menghapus produk', 'danger');
+  if (confirmDeleteBtn) {
+    confirmDeleteBtn.addEventListener('click', async () => {
+      if (!toDeleteId) return;
+      try {
+        const res = await fetch(`/delete-product-ajax/${toDeleteId}/`, {
+          method: 'POST',
+          headers: { 'X-CSRFToken': csrftoken }
+        });
+        const data = await res.json();
+        if (res.ok && data.success) {
+          deleteModal.classList.add('hidden');
+          showToast('Sukses', data.message || 'Produk dihapus', 'success');
+          await loadProducts();
+        } else {
+          showToast('Error', data.error || 'Gagal menghapus produk', 'danger');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast('Error', 'Gagal menghapus produk (network)', 'danger');
       }
-    } catch (err) {
-      console.error(err);
-      showToast('Error', 'Gagal menghapus produk (network)', 'danger');
-    }
-  });
+    });
+  }
 
-  // ---------- Refresh ----------
-  btnRefresh.addEventListener('click', () => loadProducts());
+  // =========================
+  // Refresh Button
+  // =========================
+  if (btnRefresh) {
+    btnRefresh.addEventListener('click', () => loadProducts());
+  }
 
-  // ---------- Utilities ----------
+  // =========================
+  // Escape HTML
+  // =========================
   function escapeHtml(text) {
     if (!text && text !== 0) return '';
     return String(text)
@@ -288,6 +299,8 @@ document.addEventListener('DOMContentLoaded', () => {
       .replace(/'/g, "&#039;");
   }
 
-  // initial load
+  // =========================
+  // Initial Load
+  // =========================
   loadProducts();
 });
