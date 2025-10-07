@@ -5,6 +5,6 @@
   <h2 class="text-2xl font-bold mb-2">{{ product.name }}</h2>
   <p class="text-gray-600 mb-2">Harga: Rp {{ product.price }}</p>
   <p class="mb-4">{{ product.description }}</p>
-  <a href="{% url 'product_list' %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Kembali</a>
+  <a href="{% url 'main:product_list' %}" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Kembali</a>
 </div>
 {% endblock %}

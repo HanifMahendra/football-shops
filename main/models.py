@@ -15,3 +15,14 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+#class Seller(models.Model):
+#    nama = models.CharField(max_length=100)
+#    tanggal_lahir = models.DateField()
+#    email = models.EmailField(unique=True)
+#    no_telp = models.CharField(max_length=100)
+#    link_socmed = models.URLField(blank=True)
+#    password = models.CharField(max_length=100)
+
+#    def __str__(self):
+#        return self.name

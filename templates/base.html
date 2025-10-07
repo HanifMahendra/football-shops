@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="csrf-token" content="{{ csrf_token }}">
     <title>{% block title %}Football-Lock Shop{% endblock %}</title>
     
     <!-- CSS Files -->
@@ -38,6 +39,17 @@
     <!-- Main Content -->
     <main class="animate-fadeIn">
         {% block content %}{% endblock %}
+
+        {% if messages %}
+            <div class="container mt-3">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
     </main>
 
     <!-- Footer -->
@@ -47,15 +59,31 @@
 
     <!-- Scripts -->
     <script>
-        // Add smooth scrolling
+        // Smooth scrolling helper (safe if links exist)
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
             anchor.addEventListener('click', function (e) {
                 e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
+                if (document.querySelector(this.getAttribute('href'))) {
+                  document.querySelector(this.getAttribute('href')).scrollIntoView({ behavior: 'smooth' });
+                }
             });
         });
     </script>
+
+    <!-- Global static scripts -->
+    <script src="{% static 'js/product_ajax.js' %}"></script>
+    <script src="{% static 'js/toast.js' %}"></script>
+    <script src="{% static 'js/auth_ajax.js' %}"></script>
+
+    <!-- Provide AJAX URLs to auth_ajax.js (so it can be static) -->
+    <script>
+      window.AJAX_URLS = {
+        login: "{% url 'main:login_ajax' %}",
+        register: "{% url 'main:register_ajax' %}",
+        logout: "{% url 'main:logout_ajax' %}"
+      };
+    </script>
+
+    {% include 'toast.html' %}
 </body>
 </html>
