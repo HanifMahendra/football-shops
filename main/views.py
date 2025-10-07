@@ -12,6 +12,7 @@ from django.contrib.auth.models import User
 import json
 import datetime
 from django.http import HttpResponseRedirect
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse
 
 @login_required(login_url='/login')
@@ -253,39 +254,41 @@ def delete_product_ajax(request, id):
     
 # --- AUTH via AJAX: register/login/logout ---
 @require_http_methods(["POST"])
+@csrf_exempt
 def register_ajax(request):
-    try:
-        payload = json.loads(request.body.decode('utf-8')) if request.body else request.POST.dict()
-        username = payload.get('username')
-        password = payload.get('password')
-        if not username or not password:
-            return JsonResponse({'success': False, 'error': 'username & password required'}, status=400)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+
         if User.objects.filter(username=username).exists():
-            return JsonResponse({'success': False, 'error': 'username exists'}, status=400)
+            return JsonResponse({"success": False, "message": "Username already exists"})
+
         user = User.objects.create_user(username=username, password=password)
-        login(request, user)
-        return JsonResponse({'success': True, 'message': 'registered', 'username': user.username})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+        user.save()
+        return JsonResponse({"success": True, "message": "Registration successful"})
+
+    return JsonResponse({"success": False, "message": "Invalid request method"})
 
 @require_http_methods(["POST"])
+@csrf_exempt
 def login_ajax(request):
-    try:
-        payload = json.loads(request.body.decode('utf-8')) if request.body else request.POST.dict()
-        username = payload.get('username')
-        password = payload.get('password')
-        user = authenticate(request, username=username, password=password)
-        if user is None:
-            return JsonResponse({'success': False, 'error': 'invalid credentials'}, status=400)
-        login(request, user)
-        return JsonResponse({'success': True, 'message': 'logged in', 'username': user.username})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    if request.method == "POST":
+        data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
+
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            login(request, user)
+            return JsonResponse({"success": True, "message": "Login successful"})
+        else:
+            return JsonResponse({"success": False, "message": "Invalid username or password"})
+
+    return JsonResponse({"success": False, "message": "Invalid request method"})
+
 
 @require_http_methods(["POST"])
 def logout_ajax(request):
-    try:
-        logout(request)
-        return JsonResponse({'success': True, 'message': 'logged out'})
-    except Exception as e:
-        return JsonResponse({'success': False, 'error': str(e)}, status=500)
+    logout(request)
+    return JsonResponse({"success": True, "message": "Logout successful"})
