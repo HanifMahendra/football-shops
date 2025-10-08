@@ -239,9 +239,9 @@ README Tugas 6:
 2. Bagaimana AJAX bekerja di Django (alur request–response)?
 3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
 4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
-5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?```
+5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?
 
-```Jawaban:
+Jawaban:
 1.
 Synchronous Request:
 Browser mengirim permintaan ke server dan menunggu hingga mendapat respons
