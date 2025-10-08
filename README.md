@@ -230,3 +230,124 @@ Buat responsive -> pakai media queries, flexbox, grid.
 Cek di layar beda-beda -> desktop, tablet, HP, pastiin nggak pecah. (CTRL ALT I + M)
 Finishing -> rapihin spacing, alignment, font size.
 Catet di README biar langkah-langkahnya jelas. (termasuk checklist kan ya?)
+
+
+README Tugas 6:
+
+```Pertanyaan:
+1. Apa perbedaan antara synchronous request dan asynchronous request?
+2. Bagaimana AJAX bekerja di Django (alur request–response)?
+3. Apa keuntungan menggunakan AJAX dibandingkan render biasa di Django?
+4. Bagaimana cara memastikan keamanan saat menggunakan AJAX untuk fitur Login dan Register di Django?
+5. Bagaimana AJAX mempengaruhi pengalaman pengguna (User Experience) pada website?```
+
+```Jawaban:
+1.
+Synchronous Request:
+Browser mengirim permintaan ke server dan menunggu hingga mendapat respons
+Selama menunggu, halaman web diblokir (tidak responsif)
+Setiap interaksi mengakibatkan refresh halaman penuh
+Alurnya linear dan berurutan: request → tunggu → response → lanjut
+
+Asynchronous Request:
+Browser mengirim permintaan namun tidak perlu menunggu respons
+Halaman web tetap responsif selama menunggu respons dari server
+Memperbarui hanya bagian tertentu dari halaman tanpa refresh penuh
+Alurnya non-linear: request → lanjutkan eksekusi → handle response ketika datang
+
+2.
+Event Trigger:
+Pengguna melakukan aksi (klik tombol, submit form, dll)
+
+JavaScript Inisiasi:
+JavaScript membuat objek XMLHttpRequest atau menggunakan Fetch API
+Request Dikirim: Browser mengirim permintaan HTTP asinkron ke URL Django tertentu
+
+Server Processing:
+Django menerima request di URL yang ditentukan
+View Django memproses request seperti biasa
+Alih-alih merender template HTML penuh, Django mengembalikan data (biasanya JSON)
+
+Response Handling:
+Browser menerima data JSON
+JavaScript mengolah data dan memperbarui DOM secara selektif
+Perubahan ditampilkan tanpa refresh halaman penuh
+
+3.
+Performa Lebih Baik:
+Mengurangi transfer data (hanya mengambil data yang diperlukan)
+Mengurangi beban server (tidak perlu merender template lengkap)
+Waktu respons lebih cepat karena hanya memperbarui sebagian halaman
+
+User Experience Superior:
+Tidak ada "flash" putih saat berpindah antar halaman
+Aplikasi terasa lebih responsif dan mulus
+Interaksi tanpa gangguan navigasi
+
+Fleksibilitas Pengembangan:
+Pemisahan jelas antara backend (data) dan frontend (UI)
+Memungkinkan pembaruan real-time tanpa reload
+Memudahkan implementasi fitur modern (infinite scroll, auto-save, dll)
+
+Mengurangi Redundansi:
+Elemen statis (header, footer, sidebar) tidak perlu dimuat ulang
+Hanya data yang berubah yang ditransfer dan diperbarui
+
+4.
+CSRF Protection:
+Menyertakan CSRF token dalam setiap request AJAX
+Contoh implementasi:
+const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+fetch('/api/login/', {
+  method: 'POST',
+  headers: {
+    'X-CSRFToken': csrftoken,
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify(data)
+});
+
+Validasi Server-Side:
+Tetap melakukan validasi ketat di server meskipun ada validasi client-side
+Jangan pernah mengandalkan validasi JavaScript saja
+
+Penggunaan HTTPS:
+Mengenkripsi semua traffic untuk mencegah MITM attacks
+Sangat penting untuk login/register yang mentransmit kredensial
+
+Rate Limiting:
+Menerapkan pembatasan percobaan login untuk mencegah brute force
+Menambahkan delay pada respons login gagal
+
+Penanganan Error yang Aman:
+Tidak mengekspos detail sistem saat error terjadi
+Memberikan pesan error generik yang tidak membantu attacker
+
+HTTP-Only Cookies:
+Menggunakan HTTP-only cookies untuk token autentikasi
+Mencegah akses JavaScript ke cookie sensitif
+
+5.
+Responsivitas Tinggi:
+Feedback instan tanpa delay refresh halaman
+Aplikasi terasa seperti aplikasi desktop/native
+
+Indikator Status yang Lebih Baik:
+Dapat menampilkan loading spinner selama proses
+Toast notifications untuk konfirmasi aksi
+Feedback visual real-time
+
+Navigasi yang Mulus:
+Pengguna tetap dalam konteks yang sama
+Tidak ada gangguan alur kerja pengguna
+
+Peningkatan Interaktivitas:
+Validasi form real-time sebelum submit
+Autosuggest dan autocomplete yang responsif
+Filter dan sorting tanpa reload halaman
+
+Optimasi untuk Koneksi Lambat:
+Pengguna masih dapat berinteraksi saat loading
+Data dapat dimuat secara progresif (lazy loading)
+Pengalaman browsing tetap mulus bahkan di koneksi lambat
+```
