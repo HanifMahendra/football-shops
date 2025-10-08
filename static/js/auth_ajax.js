@@ -1,8 +1,13 @@
 // static/js/auth_ajax.js
-// Depends on: window.AJAX_URLS (set in base.html), createToast (toast.js)
+// Depends on: createToast (toast.js)
 
 (function() {
-  if (!window.AJAX_URLS) return;
+  // Use AJAX-specific endpoints directly instead of window.AJAX_URLS
+  const AJAX_ENDPOINTS = {
+    login: '/auth/login-ajax/',    // AJAX-specific endpoint
+    register: '/auth/register-ajax/',  // AJAX-specific endpoint
+    logout: '/auth/logout-ajax/'   // AJAX-specific endpoint
+  };
 
   function getCsrf() {
     const meta = document.querySelector('meta[name="csrf-token"]');
@@ -29,7 +34,7 @@
     return { ok: res.ok, data };
   }
 
-  // Login form (if exists)
+  // Login form
   const loginForm = document.getElementById('login-form');
   if (loginForm) {
     loginForm.addEventListener('submit', async (e) => {
@@ -42,7 +47,7 @@
         return;
       }
       if (btn) btn.disabled = true;
-      const { ok, data } = await postJson(window.AJAX_URLS.login, { username, password });
+      const { ok, data } = await postJson(AJAX_ENDPOINTS.login, { username, password });
       if (data && data.success) {
         createToast('Login', 'Login berhasil! Mengalihkan...', 'success');
         setTimeout(()=> window.location.href = '/', 900);
@@ -71,10 +76,10 @@
         return;
       }
       if (btn) btn.disabled = true;
-      const { ok, data } = await postJson(window.AJAX_URLS.register, { username, password: password1 });
+      const { ok, data } = await postJson(AJAX_ENDPOINTS.register, { username, password: password1 });
       if (data && data.success) {
         createToast('Register', 'Akun berhasil dibuat. Mengalihkan...', 'success');
-        setTimeout(()=> window.location.href = '/', 900);
+        setTimeout(()=> window.location.href = '/login/', 900); // Redirect to login after registration
       } else {
         createToast('Register gagal', data.error || 'Gagal mendaftar', 'danger');
       }
@@ -86,14 +91,12 @@
   document.addEventListener('click', async (e) => {
     const a = e.target.closest('a');
     if (!a) return;
-    // match logout URL path (AJAX endpoint)
-    const logoutUrl = window.AJAX_URLS.logout;
     // We intercept only if href equals the regular logout url (non-ajax, typically '/logout/')
     if (a.getAttribute('href') && a.getAttribute('href').endsWith('/logout/')) {
       e.preventDefault();
       // call AJAX logout endpoint
       try {
-        const { ok, data } = await postJson(logoutUrl, {});
+        const { ok, data } = await postJson(AJAX_ENDPOINTS.logout, {});
         if (data && data.success) {
           createToast('Logout', 'Berhasil logout', 'success');
           setTimeout(()=> window.location.href = '/login/', 700);
@@ -108,5 +111,4 @@
       }
     }
   });
-
 })();

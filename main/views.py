@@ -83,7 +83,13 @@ def add_product(request):
 
 # --- API: get all products serialized as JSON ---
 def get_products_json(request):
-    products = Product.objects.all().order_by('-id')
+    filter_type = request.GET.get("filter", "all")
+    
+    if filter_type == "my" and request.user.is_authenticated:
+        products = Product.objects.filter(user=request.user).order_by('-id')
+    else:
+        products = Product.objects.all().order_by('-id')
+        
     data = serializers.serialize('json', products)
     return HttpResponse(data, content_type='application/json')
 

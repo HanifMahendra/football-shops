@@ -89,12 +89,18 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   const fetchProducts = async () => {
-    container.innerHTML = '';
-    loading.classList.remove('hidden');
-    empty.classList.add('hidden');
-    error.classList.add('hidden');
+      // Get filter parameter from URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const filter = urlParams.get('filter') || 'all';
+
+      container.innerHTML = '';
+      loading.classList.remove('hidden');
+      empty.classList.add('hidden');
+      error.classList.add('hidden');
+      
     try {
-      const res = await fetch('/get-products-json/');
+      // Pass filter to API
+      const res = await fetch(`/get-products-json/?filter=${filter}`);
       if (!res.ok) throw new Error('Fetch gagal');
       const data = await res.json();
       loading.classList.add('hidden');

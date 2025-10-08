@@ -1,3 +1,6 @@
+// =========================
+// Fungsi ambil CSRF Token
+// =========================
 function getCookie(name) {
   let cookieValue = null;
   if (document.cookie && document.cookie !== '') {
@@ -41,10 +44,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
   const cancelDeleteBtn = document.getElementById('cancelDeleteBtn');
 
-  let toDeleteId = null; // simpan id untuk delete nanti
+  let toDeleteId = null;
 
   // =========================
-  // UI Helper Functions
+  // UI Helper
   // =========================
   function showLoading() {
     if (!loadingState) return;
@@ -88,14 +91,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Load Products
   // =========================
   async function loadProducts() {
+    if (!productContainer) return;
     showLoading();
     try {
       const res = await fetch("{% url 'main:get_products_json' %}");
-      if (!res.ok) throw new Error('Network error');
+
+      // 🔒 Cek kalau ternyata redirect ke login
+      if (res.redirected) {
+        window.location.href = res.url;
+        return;
+      }
+
+      if (!res.ok) throw new Error('Network response was not ok');
       const data = await res.json();
       const items = typeof data === 'string' ? JSON.parse(data) : data;
 
-      if (!items?.length) {
+      if (!items || items.length === 0) {
         showEmpty();
         return;
       }
@@ -123,12 +134,12 @@ document.addEventListener('DOMContentLoaded', () => {
         productContainer.appendChild(card);
       });
 
-      document.querySelectorAll('.editBtn').forEach(btn =>
-        btn.addEventListener('click', e => openEditModal(e.target.dataset.id))
-      );
-      document.querySelectorAll('.deleteBtn').forEach(btn =>
-        btn.addEventListener('click', e => openDeleteModal(e.target.dataset.id))
-      );
+      document.querySelectorAll('.editBtn').forEach(btn => {
+        btn.addEventListener('click', e => openEditModal(e.target.dataset.id));
+      });
+      document.querySelectorAll('.deleteBtn').forEach(btn => {
+        btn.addEventListener('click', e => openDeleteModal(e.target.dataset.id));
+      });
 
     } catch (err) {
       console.error(err);
@@ -137,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================
-  // Add / Edit Modal
+  // Add/Edit Modal
   // =========================
   const btnAdd = document.getElementById('openAddModal');
   if (btnAdd && productModal) {
@@ -152,12 +163,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  if (productModalClose) {
-    productModalClose.addEventListener('click', () => productModal.classList.add('hidden'));
-  }
-  if (productModalCancel) {
-    productModalCancel.addEventListener('click', () => productModal.classList.add('hidden'));
-  }
+  productModalClose?.addEventListener('click', () => productModal.classList.add('hidden'));
+  productModalCancel?.addEventListener('click', () => productModal.classList.add('hidden'));
 
   if (productForm) {
     productForm.addEventListener('submit', async (e) => {
@@ -194,6 +201,13 @@ document.addEventListener('DOMContentLoaded', () => {
           },
           body: JSON.stringify(payload)
         });
+
+        // 🔒 Cek redirect ke login
+        if (res.redirected) {
+          window.location.href = res.url;
+          return;
+        }
+
         const data = await res.json();
 
         if (res.ok && data.success) {
@@ -210,9 +224,17 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // =========================
+  // Edit Product
+  // =========================
   async function openEditModal(id) {
     try {
       const res = await fetch(`/get-product-json/${id}/`);
+      if (res.redirected) {
+        window.location.href = res.url;
+        return;
+      }
+
       if (!res.ok) throw new Error('Not found');
       const data = await res.json();
       const item = typeof data === 'string' ? JSON.parse(data)[0] : data;
@@ -233,58 +255,66 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   // =========================
-  // Delete Modal
+  // Delete Product
   // =========================
   function openDeleteModal(id) {
     toDeleteId = id;
     fetch(`/get-product-json/${id}/`)
-      .then(res => res.json())
+      .then(res => {
+        if (res.redirected) {
+          window.location.href = res.url;
+          return null;
+        }
+        return res.json();
+      })
       .then(data => {
+        if (!data) return;
         const item = typeof data === 'string' ? JSON.parse(data)[0] : data;
         deleteProductName.textContent = item.fields.name;
         deleteModal.classList.remove('hidden');
-      }).catch(err => {
+      })
+      .catch(err => {
         console.error(err);
         showToast('Error', 'Gagal mengambil data produk', 'danger');
       });
   }
 
-  if (cancelDeleteBtn) {
-    cancelDeleteBtn.addEventListener('click', () => {
-      toDeleteId = null;
-      deleteModal.classList.add('hidden');
-    });
-  }
+  cancelDeleteBtn?.addEventListener('click', () => {
+    toDeleteId = null;
+    deleteModal.classList.add('hidden');
+  });
 
-  if (confirmDeleteBtn) {
-    confirmDeleteBtn.addEventListener('click', async () => {
-      if (!toDeleteId) return;
-      try {
-        const res = await fetch(`/delete-product-ajax/${toDeleteId}/`, {
-          method: 'POST',
-          headers: { 'X-CSRFToken': csrftoken }
-        });
-        const data = await res.json();
-        if (res.ok && data.success) {
-          deleteModal.classList.add('hidden');
-          showToast('Sukses', data.message || 'Produk dihapus', 'success');
-          await loadProducts();
-        } else {
-          showToast('Error', data.error || 'Gagal menghapus produk', 'danger');
-        }
-      } catch (err) {
-        console.error(err);
-        showToast('Error', 'Gagal menghapus produk (network)', 'danger');
+  confirmDeleteBtn?.addEventListener('click', async () => {
+    if (!toDeleteId) return;
+    try {
+      const res = await fetch(`/delete-product-ajax/${toDeleteId}/`, {
+        method: 'POST',
+        headers: { 'X-CSRFToken': csrftoken }
+      });
+
+      if (res.redirected) {
+        window.location.href = res.url;
+        return;
       }
-    });
-  }
+
+      const data = await res.json();
+      if (res.ok && data.success) {
+        deleteModal.classList.add('hidden');
+        showToast('Sukses', data.message || 'Produk dihapus', 'success');
+        await loadProducts();
+      } else {
+        showToast('Error', data.error || 'Gagal menghapus produk', 'danger');
+      }
+    } catch (err) {
+      console.error(err);
+      showToast('Error', 'Gagal menghapus produk (network)', 'danger');
+    }
+  });
 
   // =========================
-  // Refresh Button
+  // Refresh
   // =========================
-  if (btnRefresh) {
-    btnRefresh.addEventListener('click', () => loadProducts());
-  }
+  btnRefresh?.addEventListener('click', () => loadProducts());
 
   // =========================
   // Escape HTML
@@ -302,5 +332,5 @@ document.addEventListener('DOMContentLoaded', () => {
   // =========================
   // Initial Load
   // =========================
-  loadProducts();
+  if (productContainer) loadProducts();
 });
