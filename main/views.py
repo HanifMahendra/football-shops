@@ -54,6 +54,9 @@ def show_json(request):
     ]
     return JsonResponse(data, safe=False)
 
+def show_json(request):
+    data = Product.objects.filter(user=request.user)
+    return HttpResponse(serializers.serialize("json", data), content_type="application/json")
 
 def show_xml_by_id(request, id):
     data = Product.objects.filter(pk=id)
